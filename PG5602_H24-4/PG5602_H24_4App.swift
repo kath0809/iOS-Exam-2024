@@ -6,12 +6,23 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct PG5602_H24_4App: App {
+    var sharedModelContainer: ModelContainer = {
+        do {
+            let schema = Schema([StoredArticle.self])
+            return try ModelContainer(for: schema)
+        } catch {
+            fatalError("Could not create model container: \(error)")
+        }
+    }()
+    
     var body: some Scene {
         WindowGroup {
             SplashScreen()
+                .modelContainer(sharedModelContainer)
         }
     }
 }

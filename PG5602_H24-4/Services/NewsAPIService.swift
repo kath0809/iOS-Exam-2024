@@ -43,6 +43,7 @@
 //    }
 //}
 
+// VIRKER 02.12.
 
 import Foundation
 
@@ -52,14 +53,13 @@ class NewsApiService {
 
     // Hent nyheter basert på en spesifikk type søk (top-headlines eller everything)
     func fetchNews(endpoint: String, query: String? = nil, completion: @escaping (Result<[Article], Error>) -> Void) {
-#if DEBUG
+//#if DEBUG
         // Bruk mock-data for å unngå ekte API-kall i preview
         completion(.success(MockData.articles))
-        #else
+ //       #else
         let apiKey = APIConfig.apiKey
         //let apiKey = UserDefaults.standard.string(forKey: "apiKey") ?? APIConfig.apiKey
         
-        let apiKey = APIConfig.apiKey
 
         guard !apiKey.isEmpty else {
             print("API key is missing")
@@ -112,7 +112,7 @@ class NewsApiService {
                 completion(.failure(error))
             }
         }.resume()
-#endif
+//#endif
     }
     
 
