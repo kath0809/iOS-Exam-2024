@@ -5,10 +5,10 @@
 //  Created by Karima Thingvold on 25/11/2024.
 //
 
-import SwiftUI
-
+//import SwiftUI
+//
 //struct TopHeadlineView: View {
-//    @StateObject private var viewModel = NewsViewModel()
+//    //@StateObject private var viewModel = NewsViewModel()
 //    @State private var selectedCountry: String? = "us"
 //    @State private var selectedCategory: String? = "technology"
 //
@@ -27,17 +27,17 @@ import SwiftUI
 //                    Text("Sports").tag("sports")
 //                }.pickerStyle(SegmentedPickerStyle())
 //
-//                List(viewModel.articles) { article in
-//                    VStack(alignment: .leading) {
-//                        Text(article.title).font(.headline)
-//                        Text(article.description ?? "").font(.subheadline).foregroundColor(.gray)
-//                    }
-//                }
+////                List(viewModel.articles) { article in
+////                    VStack(alignment: .leading) {
+////                        Text(article.title).font(.headline)
+////                        Text(article.description ?? "").font(.subheadline).foregroundColor(.gray)
+////                    }
+////                }
 //            }
 //            .navigationTitle("Top Headlines")
-//            .task {
-//                await viewModel.loadTopHeadlines(country: selectedCountry, category: selectedCategory)
-//            }
+////            .task {
+////                await viewModel.loadTopHeadlines(country: selectedCountry, category: selectedCategory)
+////            }
 //        }
 //    }
 //}

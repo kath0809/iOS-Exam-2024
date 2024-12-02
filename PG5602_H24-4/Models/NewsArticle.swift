@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct NewsArticle: Identifiable, Decodable {
+struct Article: Identifiable, Decodable {
     let id: UUID = UUID()
     let author: String?
     let title: String
@@ -26,8 +26,8 @@ struct Source: Decodable {
     let name: String
 }
 
-struct NewsResponse: Decodable {
-    let articles: [NewsArticle]
+struct ArticlesResponse: Decodable {
+    let articles: [Article]
     let status: String
     let totalResults: Int
 }

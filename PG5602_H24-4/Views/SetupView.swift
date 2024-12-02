@@ -1,15 +1,15 @@
-    //
-    //  SetupView.swift
-    //  PG5602_H24-4
-    //
-    //  Created by Karima Thingvold on 01/12/2024.
-    //
+//
+//  SetupView.swift
+//  PG5602_H24-4
+//
+//  Created by Karima Thingvold on 01/12/2024.
+//
 
 import SwiftUI
 import Combine
 
 struct SetupView: View {
-    @State private var apiKey: String = UserDefaults.standard.string(forKey: "apiKey") ?? ""
+    //@State private var apiKey: String = UserDefaults.standard.string(forKey: "apiKey") ?? ""
     @State private var darkMode = false
     @State private var fontColor: Color = .white
     @State private var fontSize: CGFloat = 12
@@ -23,12 +23,12 @@ struct SetupView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("API Key")) {
-                SecureField("Enter your API key", text: $apiKey)
-                    .onChange(of: apiKey) { oldValue, newValue in
-                        saveApiKey(newValue)
-                    }
-            }
+//            Section(header: Text("API Key")) {
+//                SecureField("Enter your API key", text: $apiKey)
+//                    .onChange(of: apiKey) { oldValue, newValue in
+//                        saveApiKey(newValue)
+//                    }
+//            }
             Section(header: Text("Country & Category")) {
                 TextField("Enter country", text: $selectedCountry)
                 TextField("Enter category", text: $selectedCategory)
