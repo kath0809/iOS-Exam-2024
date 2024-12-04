@@ -10,7 +10,7 @@ struct MainLayoutView: View {
     var body: some View {
         TabView {
             Tab("My Artichles", systemImage: "doc.text") {
-                NewsTickerView()
+                //NewsTickerView()
                 ArticlesView()
             }
             Tab("Search", systemImage: "magnifyingglass") {

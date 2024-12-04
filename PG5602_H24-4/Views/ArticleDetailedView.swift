@@ -187,16 +187,16 @@ struct ArticleDetailView: View {
     }
 }
 
-#Preview {
-    let exampleArticle = NewsArticle(
-        author: "John Doe",
-        title: "Breaking News: Swift is Awesome!",
-        description: "SwiftUI helps you build great-looking apps across all Apple platforms with the power of Swift — and surprisingly little code. You can bring even better experiences to everyone, on any Apple device, using just one set of tools and APIs.",
-        url: "https://developer.apple.com/xcode/swiftui/",
-        urlToImage: "https://developer.apple.com/xcode/swiftui/images/hero-lockup-swiftui-large_2x.webp",
-        publishedAt: "2024-11-25T12:10:00Z"
-    )
-
-    ArticleDetailView(article: exampleArticle)
-        .modelContainer(for: [Article.self]) // Mock ModelContext for SwiftData
-}
+//#Preview {
+//    let exampleArticle = NewsArticle(
+//        author: "John Doe",
+//        title: "Breaking News: Swift is Awesome!",
+//        description: "SwiftUI helps you build great-looking apps across all Apple platforms with the power of Swift — and surprisingly little code. You can bring even better experiences to everyone, on any Apple device, using just one set of tools and APIs.",
+//        url: "https://developer.apple.com/xcode/swiftui/",
+//        urlToImage: "https://developer.apple.com/xcode/swiftui/images/hero-lockup-swiftui-large_2x.webp",
+//        publishedAt: "2024-11-25T12:10:00Z"
+//    )
+//
+//    ArticleDetailView(article: exampleArticle)
+//        .modelContainer(for: [Article.self]) // Mock ModelContext for SwiftData
+//}
