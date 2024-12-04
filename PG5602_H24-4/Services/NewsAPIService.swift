@@ -77,9 +77,60 @@ class NewsApiService {
     }
     
         // Hent toppnyheter
-    func fetchTopHeadlines(completion: @escaping (Result<[NewsArticle], Error>) -> Void) {
-        fetchNews(endpoint: topHeadlinesURL, completion: completion)
+    func fetchTopHeadlines(country: String? = nil, category: String? = nil, pageSize: Int = 20, completion: @escaping (Result<[NewsArticle], Error>) -> Void) {
+        let apiKey = APIConfig.apiKey
+        guard !apiKey.isEmpty else {
+            completion(.failure(NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "API key is missing"])))
+            return
+        }
+        
+        var queryItems = [
+            URLQueryItem(name: "apiKey", value: apiKey),
+            URLQueryItem(name: "pageSize", value: String(pageSize))
+        ]
+        
+        if let country = country, country != "All" {
+            queryItems.append(URLQueryItem(name: "country", value: country))
+        }
+        
+        if let category = category, category != "All" {
+            queryItems.append(URLQueryItem(name: "category", value: category))
+        }
+        
+        guard var urlComponents = URLComponents(string: topHeadlinesURL) else {
+            completion(.failure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            return
+        }
+        
+        urlComponents.queryItems = queryItems
+        
+        guard let url = urlComponents.url else {
+            completion(.failure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(NSError(domain: "", code: 500, userInfo: [NSLocalizedDescriptionKey: "No data received"])))
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                let newsResponse = try decoder.decode(ArticlesResponse.self, from: data)
+                completion(.success(newsResponse.articles))
+            } catch {
+                completion(.failure(error))
+            }
+        }.resume()
     }
+
     
         // Hent nyheter med et spesifikt søkeord
     func searchArticles(query: String, completion: @escaping (Result<[NewsArticle], Error>) -> Void) {

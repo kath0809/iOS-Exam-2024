@@ -10,9 +10,9 @@ struct MainLayoutView: View {
     var body: some View {
         TabView {
             Tab("My Artichles", systemImage: "doc.text") {
+                NewsTickerView()
                 ArticlesView()
             }
-            //.badge(2)
             Tab("Search", systemImage: "magnifyingglass") {
                 SearchView()
             }

@@ -87,6 +87,11 @@ struct ArticlesView: View {
     }
 
     var body: some View {
+//        VStack {
+//            NewsTickerView()
+//                .frame(height: 50)
+//                .background(Color.gray.opacity(0.1))
+//        }
         NavigationView {
             if storedArticles.isEmpty {
                 VStack {
