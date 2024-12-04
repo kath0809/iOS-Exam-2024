@@ -86,11 +86,11 @@ struct TickerView: View {
             HStack {
                 ForEach(articles) { article in
                     Text(article.title)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.tickerText)
                         .font(.headline)
                         .lineLimit(1)
                         .padding()
-                        //.background(Color.blue)
+                        .background(.tickerBackground)
                         .cornerRadius(8)
                         .onTapGesture {
                             onTap(article)
@@ -100,7 +100,6 @@ struct TickerView: View {
             .offset(x: tickerOffset)
         }
         .frame(height: 50)
-        .background(Color.blue)
     }
 }
 
