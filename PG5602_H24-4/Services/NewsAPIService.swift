@@ -136,10 +136,10 @@ class NewsApiService {
     }
 
     func searchArticles(query: String, sortBy: String, completion: @escaping (Result<[NewsArticle], Error>) -> Void) {
-//#if DEBUG
-//        completion(.success(MockData.articles))
-//        return
-//        #endif
+#if DEBUG
+        completion(.success(MockData.articles))
+        return
+        #endif
         
         guard !query.isEmpty else {
             completion(.failure(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Query is empty"])))
@@ -192,10 +192,14 @@ class NewsApiService {
 
 struct MockData {
     static let articles = [
-        NewsArticle(author: "Mock Author",title: "Mock Title 1",  description: "This is a mock description 1", url: "https://example.com/1", urlToImage: "https://seeklogo.com/images/N/new-york-times-logo-EE0F194CA3-seeklogo.com.png", publishedAt: "2024-12-01T10:00:00Z"),
+        NewsArticle(author: "Mock Author",title: "Mock Title 1",  description: "This is a mock description 1", url: "https://example.com/1", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-01T10:00:00Z"),
     
-        NewsArticle(author: "Mock Author 2",title: "Mock Title 2",  description: "This is a mock description 2", url: "https://example.com/2", urlToImage: "https://seeklogo.com/images/B/bbc-news-logo-8648ABD044-seeklogo.com.png", publishedAt: "2024-12-01T10:00:00Z"),
+        NewsArticle(author: "Mock Author 2",title: "Mock Title 2",  description: "This is a mock description 2", url: "https://example.com/2", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-01T10:00:00Z"),
         
-        NewsArticle(author: "Mock Author 3",title: "Mock Title 3",  description: "This is a mock description 2", url: "https://example.com/3", urlToImage: "https://download.logo.wine/logo/CNN/CNN-Logo.wine.png", publishedAt: "2024-12-01T10:00:00Z"),
+        NewsArticle(author: "Mock Author 3",title: "Mock Title 3",  description: "This is a mock description 2", url: "https://example.com/3", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-01T10:00:00Z"),
+        
+        NewsArticle(author: "Mock Author 3",title: "Mock Title 4",  description: "This is a mock description 2", url: "https://example.com/3", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-01T10:00:00Z"),
+        
+        NewsArticle(author: "Mock Author 3",title: "Mock Title 5",  description: "This is a mock description 2", url: "https://example.com/3", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-01T10:00:00Z"),
     ]
 }

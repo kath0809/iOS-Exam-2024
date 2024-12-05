@@ -5,6 +5,7 @@
 //  Created by Karima Thingvold on 01/12/2024.
 //
 
+import Foundation
 import SwiftUI
 import SwiftData
 
@@ -15,10 +16,10 @@ enum SortOption: String, CaseIterable {
 }
 
 struct SearchView: View {
-    @Environment(\.modelContext) private var modelContext
-    //@Query(sort: \Search.timestamp, order: .reverse) var searchHistory: [Search]
-    //@State var searchHistory: [Search] = []
-
+    @Environment(\.modelContext) var modelContext
+    @Query(sort: \Search.timestamp, order: .reverse) var searchHistory: [Search]
+        //@State var searchHistory: [Search] = []
+    
     @State var query: String = ""
     @State var articles: [NewsArticle] = []
     @State var isLoading = false
@@ -36,20 +37,20 @@ struct SearchView: View {
                         search()
                     })
                     .textFieldStyle(PlainTextFieldStyle())
-//                    Menu {
-//                        ForEach(searchHistory) { search in
-//                            Button(action: {
-//                                query = search.query // Sett søkefeltet til valgt søkeord
-//                                performSearch() // Utfør søket
-//                            }) {
-//                                Text(search.query)
-//                            }
-//                        }
-//                    } label: {
-//                        Image(systemName: "arrowtriangle.down.fill")
-//                            .foregroundColor(.blue)
-//                            .padding(.horizontal, 8)
-//                    }
+                    Menu {
+                        ForEach(searchHistory) { search in
+                            Button(action: {
+                                query = search.query
+                                performSearch()
+                            }) {
+                                Text(search.query)
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "arrowtriangle.down.fill")
+                            .foregroundColor(.blue)
+                            .padding(.horizontal, 8)
+                    }
                 }
                 .padding(10)
                 .background(Color(.systemGray6))
@@ -134,7 +135,7 @@ struct SearchView: View {
         guard !query.isEmpty else { return }
         isLoading = true
         errorMessage = nil
-        //saveSearch(query: query)
+        saveSearch(query: query)
         
         let newsService = NewsApiService()
         newsService.searchArticles(query: query, sortBy: "relevance") { result in
@@ -149,13 +150,20 @@ struct SearchView: View {
             }
         }
     }
-//    func saveSearch(query: String) {
-//        if !searchHistory.contains(where: { $0.query == query }) {
-//            let newSearch = Search(query: query)
-//            modelContext.insert(newSearch)
-//        }
-//    }
+    func saveSearch(query: String) {
+        if !searchHistory.contains(where: { $0.query == query }) {
+            let newSearch = Search(query: query)
+            modelContext.insert(newSearch)
+            do {
+                try modelContext.save()
+                
+            } catch {
+                print("Error saving search: \(error)")
+            }
+        }
+    }
 }
+
 
 #Preview {
     SearchView()

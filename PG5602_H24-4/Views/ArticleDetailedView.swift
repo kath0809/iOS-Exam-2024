@@ -10,7 +10,7 @@ import SwiftData
 
 struct ArticleDetailView: View {
     let article: NewsArticle
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.modelContext) var modelContext
     @State var isArticleSaved = false
     @State var isCategoryChosen = false
     @State var showMessage = false
@@ -105,7 +105,7 @@ struct ArticleDetailView: View {
                             }
                         }
                         .onChange(of: selectedCategory) { oldValue, newValue in
-                            guard oldValue != newValue else { return } // Unngå unødvendige oppdateringer
+                            guard oldValue != newValue else { return }
                             print("Changed from \(oldValue?.name ?? "None") to \(newValue?.name ?? "None")")
                             isCategoryChosen = newValue != nil
                         }
@@ -124,7 +124,7 @@ struct ArticleDetailView: View {
                 if isArticleSaved {
                         let savedArticles = Article.fetchAll(in: modelContext)
                         if let storedArticle = savedArticles.first(where: { $0.url == article.url }) {
-                            selectedCategory = storedArticle.category // Sett til lagret kategori
+                            selectedCategory = storedArticle.category
                         }
                     }
             }
@@ -145,7 +145,6 @@ struct ArticleDetailView: View {
 
     func toggleSaveArticle() {
         if isArticleSaved {
-            // Slette artikkelen
             let savedArticles = Article.fetchAll(in: modelContext)
             if let storedArticle = savedArticles.first(where: { $0.url == article.url }) {
                 storedArticle.deleteFromDatabase(context: modelContext)
@@ -153,28 +152,24 @@ struct ArticleDetailView: View {
                 saveMessasge = "Article removed from saved articles."
             }
         } else {
-            // Lagre artikkelen og kategorien
             saveArticleWithCategory()
         }
     }
 
     func saveArticleWithCategory() {
-        // Opprette en ny artikkel
         let storedArticle = Article(
             article: article,
             category: selectedCategory,
             note: "Optional user note"
         )
         
-        // Oppdatere kategorien hvis en er valgt
         if let category = selectedCategory {
-            category.articles.append(storedArticle) // Oppdater relasjonen
-            modelContext.insert(category) // Sørg for at kategorien blir lagret
+            category.articles.append(storedArticle);
+            modelContext.insert(category);
             print("Saved article in category: \(category.name)")
             print("Category now has \(category.articles.count) articles.")
         }
         
-        // Legge artikkelen til databasen
         modelContext.insert(storedArticle)
         do {
             try modelContext.save()
@@ -186,17 +181,3 @@ struct ArticleDetailView: View {
         showMessage = true
     }
 }
-
-//#Preview {
-//    let exampleArticle = NewsArticle(
-//        author: "John Doe",
-//        title: "Breaking News: Swift is Awesome!",
-//        description: "SwiftUI helps you build great-looking apps across all Apple platforms with the power of Swift — and surprisingly little code. You can bring even better experiences to everyone, on any Apple device, using just one set of tools and APIs.",
-//        url: "https://developer.apple.com/xcode/swiftui/",
-//        urlToImage: "https://developer.apple.com/xcode/swiftui/images/hero-lockup-swiftui-large_2x.webp",
-//        publishedAt: "2024-11-25T12:10:00Z"
-//    )
-//
-//    ArticleDetailView(article: exampleArticle)
-//        .modelContainer(for: [Article.self]) // Mock ModelContext for SwiftData
-//}
