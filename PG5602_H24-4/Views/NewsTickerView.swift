@@ -12,56 +12,56 @@ struct NewsTickerView: View {
     @State var selectedArticle: NewsArticle?
     @State var tickerOffset: CGFloat = 0
     @State var isDetailedView = false
-    @State var tickPosition: TickerPosition = .top
+    @AppStorage("selectedCountry") var selectedCountry = "us"
+    @AppStorage("selectedCategory") var selectedCategory = "technology"
+    @AppStorage("isNewsTickerActive") var isNewsTickerActive = true
+    @AppStorage("articleCount") var articleCount = 5
     
     var body: some View {
-        ZStack {
-            if !isDetailedView {
+            if isNewsTickerActive {
                 TickerView(articles: articles, tickerOffset: tickerOffset, onTap: showDetails)
                     .onAppear {
+                        fetchTopHeadlines()
                         startTickAnimation()
                     }
             }
-            
-            if let article = selectedArticle {
-                LargeView(article: article) {
-                    withAnimation {
-                        selectedArticle = nil
+        if let article = selectedArticle {
+            LargeView(article: article) {
+                withAnimation {
+                    selectedArticle = nil
+                }
+            }
+        }
+    }
+
+        func startTickAnimation() {
+            let width = CGFloat(articles.count) * 700
+            let duration = Double(articles.count) * 5
+
+            tickerOffset = UIScreen.main.bounds.width
+
+            withAnimation(.linear(duration: duration).repeatForever(autoreverses: false)) {
+                tickerOffset = -width
+            }
+        }
+
+        func fetchTopHeadlines() {
+            let apiService = NewsApiService()
+            let country = selectedCountry == "us" ? nil : selectedCountry
+            let category = selectedCategory == "technology" ? nil : selectedCategory
+
+            apiService.fetchTopHeadlines(country: country, category: category, pageSize: articleCount) { result in
+                switch result {
+                case .success(let fetchedArticles):
+                    DispatchQueue.main.async {
+                        self.articles = fetchedArticles
+                        self.startTickAnimation()
                     }
+                case .failure(let error):
+                    print("Error fetching top news: \(error.localizedDescription)")
                 }
             }
         }
-        .onAppear {
-            fetchTopHeadlines()
-        }
-    }
-    
-    
-    func startTickAnimation() {
-        let width = CGFloat(articles.count * 300)
-        let duration = Double(articles.count) * 5
-        
-        tickerOffset = UIScreen.main.bounds.width
- 
-        withAnimation(.linear(duration: duration).repeatForever(autoreverses: false)) {
-            tickerOffset = -width
-        }
-    }
-    
-    func fetchTopHeadlines() {
-        let apiService = NewsApiService()
-        apiService.fetchTopHeadlines(country: "us", category: "sport") { result in
-            switch result {
-            case .success(let fetchedArticles):
-                DispatchQueue.main.async {
-                    self.articles = fetchedArticles
-                    self.startTickAnimation()
-                }
-            case .failure(let error):
-                print("Error fetching top news: \(error.localizedDescription)")
-            }
-        }
-    }
     
     func showDetails(article: NewsArticle) {
         withAnimation {
@@ -91,7 +91,7 @@ struct TickerView: View {
                         .lineLimit(1)
                         .padding()
                         .background(.tickerBackground)
-                        .cornerRadius(8)
+                        .cornerRadius(10)
                         .onTapGesture {
                             onTap(article)
                         }
@@ -99,7 +99,6 @@ struct TickerView: View {
             }
             .offset(x: tickerOffset)
         }
-        .frame(height: 50)
     }
 }
 
@@ -112,11 +111,11 @@ struct LargeView: View {
             Text(article.title)
                 .font(.title)
                 .fontWeight(.bold)
+                .foregroundStyle(.primary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.white.opacity(0.9))
+        .background(Color.gray.opacity(0.3),ignoresSafeAreaEdges: .all)
         .clipShape(RoundedRectangle(cornerRadius: 10))
-        .shadow(radius: 8)
         .transition(.scale)
     }
 }
