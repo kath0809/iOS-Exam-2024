@@ -166,15 +166,12 @@ struct ArticleDetailView: View {
         if let category = selectedCategory {
             category.articles.append(storedArticle);
             modelContext.insert(category);
-            print("Saved article in category: \(category.name)")
-            print("Category now has \(category.articles.count) articles.")
         }
         
         modelContext.insert(storedArticle)
         do {
             try modelContext.save()
             isArticleSaved = true
-            saveMessasge = "Article saved successfully with category!"
         } catch {
             saveMessasge = "Failed to save article: \(error.localizedDescription)"
         }
