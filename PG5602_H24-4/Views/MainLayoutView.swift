@@ -24,11 +24,13 @@ struct MainLayoutView: View {
             Tab("Set up", systemImage: "gearshape") {
                 SetupView()
             }
+            
+//            Tab("TestView", systemImage: "heart.fill") {
+//                APITest()
+//            }
         }
     }
 }
-
-
 
 #Preview {
     MainLayoutView()

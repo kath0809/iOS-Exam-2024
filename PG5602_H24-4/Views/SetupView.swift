@@ -88,19 +88,55 @@
 import SwiftUI
 
 struct SetupView: View {
-    @AppStorage("selectedCountry") var selectedCountry = "All"
-    @AppStorage("selectedCategory") var selectedCategory = "All"
+    @AppStorage("darkmode") var isDarkMode = false
+    @AppStorage("selectedCountry") var selectedCountry = "us"
+    @AppStorage("selectedCategory") var selectedCategory = "Technology"
     @AppStorage("isNewsTickerActive") var isNewsTickerActive = true
     @AppStorage("tickerPosition") var tickerPosition = "Top"
     @AppStorage("articleCount") var articleCount = 5
+    @AppStorage("apiKey") var apiKey = ""
+    @State var isKeySaved = false
 
     let supportedCountries = ["All", "us", "no", "ca", "de", "fr"]
-    let supportedCategories = ["All", "Technology", "Business", "Entertainment", "Health", "Science", "Sports"]
-    //let tickArticles = [1,3,5,7,10]
+    let supportedCategories = ["All", "Business", "Entertainment", "General", "Health", "Science", "Sports", "Technology"]
     let tickerPositions = ["Top", "Bottom"]
 
     var body: some View {
         Form {
+            Section(header: Text("API Key")) {
+                VStack {
+                    HStack {
+                        TextField("Place your API Key here:", text: $apiKey)
+                            .textInputAutocapitalization(.none)
+                            .autocorrectionDisabled(true)
+                            .textFieldStyle(.roundedBorder)
+
+                        Button(action: {
+                            saveApiKey(apiKey)
+                        }) {
+                            Image(systemName: isKeySaved ? "checkmark.circle.fill" : "checkmark.circle")
+                                .foregroundColor(isKeySaved ? .green : .gray)
+                                .imageScale(.large)
+                        }
+                    }
+                    
+                    if isKeySaved {
+                        Text("API Key saved successfully!")
+                            .foregroundColor(.blue)
+                            .padding(.top, 8)
+                    }
+                }
+                
+            }
+            
+            Section(header: Text("Apperance")) {
+                Toggle("Dark Mode", isOn: $isDarkMode)
+                    .onChange(of: isDarkMode) {oldValue, newValue in
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                            windowScene.windows.first?.overrideUserInterfaceStyle = newValue ? .dark : .light
+                        }}
+            }
+            
             Section(header: Text("Country & Category")) {
                 Picker("Country", selection: $selectedCountry) {
                     ForEach(supportedCountries, id: \.self) { country in
@@ -127,7 +163,11 @@ struct SetupView: View {
         }
         .navigationTitle("Setup")
         }
+    
+    func saveApiKey(_ key: String) {
+        UserDefaults.standard.set(key, forKey: "apiKey")
     }
+}
 
 #Preview {
     SetupView()

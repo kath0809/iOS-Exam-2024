@@ -18,7 +18,7 @@ enum SortOption: String, CaseIterable {
 struct SearchView: View {
     @Environment(\.modelContext) var modelContext
     @Query(sort: \Search.timestamp, order: .reverse) var searchHistory: [Search]
-        //@State var searchHistory: [Search] = []
+    //@State var searchHistory: [Search] = []
     
     @State var query: String = ""
     @State var articles: [NewsArticle] = []
@@ -35,6 +35,7 @@ struct SearchView: View {
                         .foregroundStyle(.gray)
                     TextField("Search for articles", text: $query, onCommit: {
                         search()
+                        
                     })
                     .textFieldStyle(PlainTextFieldStyle())
                     Menu {
@@ -95,8 +96,7 @@ struct SearchView: View {
                     }
                 }
             }
-            .navigationTitle("News search")
-            
+            .navigationTitle("Search for anything...")
         }
     }
     
@@ -115,7 +115,7 @@ struct SearchView: View {
                 case .success(let articles):
                     self.articles = articles
                 case .failure(let error):
-                    self.errorMessage = "Noe gikk galt: \(error.localizedDescription)"
+                    self.errorMessage = "Something went wrong: \(error.localizedDescription)"
                 }
             }
         }
@@ -150,12 +150,14 @@ struct SearchView: View {
             }
         }
     }
+    // Virker ikke
     func saveSearch(query: String) {
         if !searchHistory.contains(where: { $0.query == query }) {
             let newSearch = Search(query: query)
             modelContext.insert(newSearch)
             do {
                 try modelContext.save()
+                print("Search saved \(newSearch.query)")
                 
             } catch {
                 print("Error saving search: \(error)")

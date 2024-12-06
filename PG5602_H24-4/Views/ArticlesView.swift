@@ -110,6 +110,7 @@ struct ArticlesView: View {
     @Query(sort: \Article.savedDate, order: .reverse) var storedArticles: [Article]
     @AppStorage("tickerPosition") private var tickerPosition: String = "Top"
     @AppStorage("isNewsTickerActive") private var isNewsTickerActive: Bool = true
+    @State var detailedView = false
     
     @State var selectedCategory = "All"
     let defaultCategories = ["Technology", "Economy", "Politics", "Sports", "News"]
@@ -128,9 +129,11 @@ struct ArticlesView: View {
     
     var body: some View {
         VStack {
-            if tickerPosition == "Top" && isNewsTickerActive {
-                NewsTickerView()
-                    .frame(height: 50)
+            if !detailedView {
+                if tickerPosition == "Top" && isNewsTickerActive {
+                    NewsTickerView()
+                        .frame(height: 50)
+                }
             }
             
             NavigationView {
@@ -158,7 +161,10 @@ struct ArticlesView: View {
                 } else {
                     List {
                         ForEach(filteredArticles) { article in
-                            NavigationLink(destination: ArticleDetailView(article: article.toNewsArticle())) {
+                            NavigationLink(destination: ArticleDetailView(article: article.toNewsArticle())
+                                .onAppear { detailedView = true }
+                                .onDisappear { detailedView = false }
+                            ) {
                                 VStack(alignment: .leading) {
                                     Text(article.title)
                                         .font(.headline)
