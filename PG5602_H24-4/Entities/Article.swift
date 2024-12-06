@@ -8,37 +8,6 @@
 import Foundation
 import SwiftData
 
-//@Model
-//class Article: Identifiable {
-//    @Attribute(.unique) var id: UUID
-//    var author: String?
-//    var title: String
-//    var url: String
-//    var urlToImage: String?
-//    var content: String?
-//    var publishedAt: String?
-//    var articleDescription: String?
-//    var savedDate: Date
-//    var editedDate: Date?
-//    var category: Category?
-//    var note: String?
-//    
-//    init(article: NewsArticle, category: Category? = nil, note: String? = nil ) {
-//        self.id = UUID()
-//        self.author = article.author
-//        self.title = article.title
-//        self.url = article.url
-//        self.urlToImage = article.urlToImage
-//        self.content = article.description
-//        self.publishedAt = article.publishedAt
-//        self.articleDescription = article.description
-//        self.savedDate = Date()
-//        self.editedDate = nil
-//        self.category = category
-//        self.note = note
-//    }
-//}
-
 @Model
 class Article: Identifiable {
     @Attribute(.unique) var id: UUID
@@ -49,10 +18,11 @@ class Article: Identifiable {
     var articleDescription: String?
     var publishedAt: String?
     var savedDate: Date
+    var isArchived: Bool = false
     @Relationship(deleteRule: .nullify) var category: Category?
     var note: String?
 
-    init(article: NewsArticle, category: Category? = nil, note: String? = nil ) {
+    init(article: NewsArticle, category: Category? = nil, isArchived: Bool = false, note: String? = nil ) {
         self.id = UUID()
         self.author = article.author
         self.title = article.title
@@ -62,6 +32,7 @@ class Article: Identifiable {
         self.publishedAt = article.publishedAt
         self.savedDate = Date()
         self.category = category
+        self.isArchived = isArchived
         self.note = note
     }
 }

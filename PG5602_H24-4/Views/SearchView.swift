@@ -49,7 +49,7 @@ struct SearchView: View {
                         }
                     } label: {
                         Image(systemName: "arrowtriangle.down.fill")
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                             .padding(.horizontal, 8)
                     }
                 }
