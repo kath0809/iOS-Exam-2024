@@ -18,7 +18,7 @@ enum SortOption: String, CaseIterable {
 struct SearchView: View {
     @Environment(\.modelContext) var modelContext
     @Query(sort: \Search.timestamp, order: .reverse) var searchHistory: [Search]
-    //@State var searchHistory: [Search] = []
+        //@State var searchHistory: [Search] = []
     
     @State var query: String = ""
     @State var articles: [NewsArticle] = []
@@ -75,13 +75,19 @@ struct SearchView: View {
                     }
                 }
                 
-                if isLoading {
-                    ProgressView("Loading articles")
-                        .padding()
-                } else if let errorMessage = errorMessage {
-                    Text(errorMessage)
-                        .foregroundStyle(.red)
-                        .padding()
+                if isLoading || errorMessage != nil {
+                    ZStack{
+                        if isLoading {
+                            ProgressView("Loading articles")
+                                .controlSize(.large)
+                                .tint(.splashScreen)
+                        } else if let errorMessage = errorMessage {
+                            Text(errorMessage)
+                                .foregroundStyle(.red)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
                 } else {
                     List(articles, id: \.url) { article in
                         NavigationLink(destination: ArticleDetailView(article: article)) {
@@ -135,7 +141,7 @@ struct SearchView: View {
         guard !query.isEmpty else { return }
         isLoading = true
         errorMessage = nil
-        saveSearch(query: query)
+        //saveSearch(query: query)
         
         let newsService = NewsApiService()
         newsService.searchArticles(query: query, sortBy: "relevance") { result in
@@ -150,20 +156,20 @@ struct SearchView: View {
             }
         }
     }
-    // Virker ikke
-    func saveSearch(query: String) {
-        if !searchHistory.contains(where: { $0.query == query }) {
-            let newSearch = Search(query: query)
-            modelContext.insert(newSearch)
-            do {
-                try modelContext.save()
-                print("Search saved \(newSearch.query)")
-                
-            } catch {
-                print("Error saving search: \(error)")
-            }
-        }
-    }
+        // Virker ikke
+//    func saveSearch(query: String) {
+//        if !searchHistory.contains(where: { $0.query == query }) {
+//            let newSearch = Search(query: query)
+//            modelContext.insert(newSearch)
+//            do {
+//                try modelContext.save()
+//                print("Search saved \(newSearch.query)")
+//                
+//            } catch {
+//                print("Error saving search: \(error)")
+//            }
+//        }
+//    }
 }
 
 

@@ -93,37 +93,44 @@ struct SetupView: View {
                     Text("No archived articles")
                         .foregroundStyle(.secondary)
                 } else {
-                    VStack {
-                        Text("Archived Articles: \(archivedArticles.count)")
-                            .font(.headline)
-                        
-                        HStack {
-                            Button(action: restoreAllArchivedArticles) {
-                                Text("Restore")
-                                    .font(.body)
-                                    .foregroundStyle(.blue)
-                                    .padding()
-                                    .background(Color.blue.opacity(0.1))
-                                    .cornerRadius(8)
-                            }
-                            Button(action: deleteAllArchivedArticles) {
-                                Text("Delete")
-                                    .font(.body)
-                                    .foregroundStyle(.red)
-                                    .padding()
-                                    .background(Color.red.opacity(0.1))
-                                    .cornerRadius(8)
-                            }
+                    Text("Archived Articles: \(archivedArticles.count)")
+                        .font(.headline)
+                    
+                    HStack(spacing: 20) {
+                        Button(action: restoreAllArchivedArticles) {
+                            Text("Restore")
+                                .font(.body)
+                                .foregroundStyle(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.blue)
+                                )
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding()
+                        .buttonStyle(.plain)
+                        
+                        Button(action: deleteAllArchivedArticles) {
+                            Text("Delete")
+                                .font(.body)
+                                .foregroundStyle(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.red)
+                                )
+                        }
+                        .buttonStyle(.plain)
                     }
+                    .frame(maxWidth: .infinity)
+                    .padding()
                 }
             }
         }
+        
         .navigationTitle("Setup")
     }
-    
     func saveApiKey(_ key: String) {
         UserDefaults.standard.set(key, forKey: "apiKey")
         isKeySaved = true
@@ -132,16 +139,26 @@ struct SetupView: View {
     func restoreAllArchivedArticles() {
         for article in archivedArticles {
             article.isArchived = false
+            print("Restoring: \(article.title)")
         }
         saveChanges()
     }
     
+//    func deleteAllArchivedArticles() {
+//        for article in archivedArticles {
+//            modelContext.delete(article)
+//        }
+//        print("All archived articles deleted")
+//        saveChanges()
+//    }
     func deleteAllArchivedArticles() {
-        for article in archivedArticles {
+        archivedArticles.forEach { article in
             modelContext.delete(article)
+            print("Deleted article: \(article.title)")
         }
         saveChanges()
     }
+
     
     func saveChanges() {
         do {
