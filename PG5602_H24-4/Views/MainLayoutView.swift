@@ -9,12 +9,17 @@ import SwiftData
 
 struct MainLayoutView: View {
     @Environment(\.modelContext) var modelContext
+    @State var tickerTextColor: Color = .tickerText
+    @State var tickerFSize: Double = 16
 
     var body: some View {
         TabView {
             Tab("My Artichles", systemImage: "doc.text") {
                 //NewsTickerView()
-                ArticlesView()
+                ArticlesView(
+                    tickerTextColor: $tickerTextColor,
+                    tickerFSize: $tickerFSize
+                )
             }
             
             Tab("Search", systemImage: "magnifyingglass") {
@@ -22,7 +27,10 @@ struct MainLayoutView: View {
             }
             
             Tab("Set up", systemImage: "gearshape") {
-                SetupView()
+                SetupView(
+                    tickerTextColor: $tickerTextColor,
+                    tickerFSize: $tickerFSize
+                )
             }
             
 //            Tab("TestView", systemImage: "heart.fill") {

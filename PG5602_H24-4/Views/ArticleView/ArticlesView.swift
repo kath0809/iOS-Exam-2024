@@ -20,6 +20,8 @@ struct ArticlesView: View {
     @State var selectedArticle: Article?
     @State var selectedCategory = "All"
     let defaultCategories = ["Technology", "Economy", "Politics", "Sports", "News"]
+    @Binding var tickerTextColor: Color
+    @Binding var tickerFSize: Double
     
     var filteredArticles: [Article] {
         storedArticles.filter { article in
@@ -30,7 +32,10 @@ struct ArticlesView: View {
     var body: some View {
         VStack {
             if !detailedView && tickerPosition == "Top" && isNewsTickerActive {
-                NewsTickerView()
+                NewsTickerView(
+                    tickerTextColor: $tickerTextColor,
+                    tickerFSize: $tickerFSize
+                )
                     .frame(height: 50)
             }
             
@@ -62,7 +67,10 @@ struct ArticlesView: View {
             }
 
             if !detailedView && tickerPosition == "Bottom" && isNewsTickerActive {
-                NewsTickerView()
+                NewsTickerView(
+                    tickerTextColor: $tickerTextColor,
+                    tickerFSize: $tickerFSize
+                )
                     .frame(height: 50)
             }
         }

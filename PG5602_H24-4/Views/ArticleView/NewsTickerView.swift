@@ -16,11 +16,19 @@ struct NewsTickerView: View {
     @AppStorage("selectedCategory") var selectedCategory = "technology"
     @AppStorage("isNewsTickerActive") var isNewsTickerActive = true
     @AppStorage("articleCount") var articleCount = 5
+    @Binding var tickerTextColor: Color
+    @Binding var tickerFSize: Double
     
     var body: some View {
         ZStack {
             if isNewsTickerActive {
-                TickerView(articles: articles, tickerOffset: tickerOffset, onTap: showDetails)
+                TickerView(
+                    tickerTextColor: $tickerTextColor,
+                    tickerFSize: $tickerFSize,
+                    articles: articles,
+                    tickerOffset: tickerOffset,
+                    onTap: showDetails
+                    )
                     .onAppear {
                         fetchTopHeadlines()
                         startTickAnimation()
@@ -84,6 +92,8 @@ struct NewsTickerView: View {
 }
 
 struct TickerView: View {
+    @Binding var tickerTextColor: Color
+    @Binding var tickerFSize: Double
     let articles: [NewsArticle]
     let tickerOffset: CGFloat
     let onTap: (NewsArticle) -> Void
@@ -93,8 +103,8 @@ struct TickerView: View {
             HStack {
                 ForEach(articles) { article in
                     Text(article.title)
-                        .foregroundStyle(.tickerText)
-                        .font(.headline)
+                        .foregroundStyle(tickerTextColor)
+                        .font(.system(size: CGFloat(tickerFSize)))
                         .lineLimit(1)
                         .padding()
                         .background(.tickerBackground)
@@ -128,6 +138,3 @@ struct LargeView: View {
     }
 }
 
-#Preview {
-    NewsTickerView()
-}

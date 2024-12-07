@@ -20,7 +20,8 @@ struct SetupView: View {
     @AppStorage("apiKey") var apiKey = ""
     @State var isKeySaved = false
     @State var showConfDialog = false
-    @State var backgroundColor = Color.white
+    @Binding var tickerTextColor: Color
+    @Binding var tickerFSize: Double
     
     let supportedCountries = ["All", "us", "no", "ca", "de", "fr"]
     let supportedCategories = ["All", "Business", "Entertainment", "General", "Health", "Science", "Sports", "Technology"]
@@ -94,7 +95,17 @@ struct SetupView: View {
                         Text(position)
                     }
                 }
+                ColorPicker("Text Color", selection: $tickerTextColor)
+                HStack {
+                    Text("Font size")
+                    Slider(value: $tickerFSize, in: 10...30, step: 1) {
+                        Text("Font siz")
+                    }
+                    Text("\(Int(tickerFSize))")
+                    
+                }
             }
+            
             Section(header: Text("Archived Articles")) {
                 if archivedArticles.isEmpty {
                     Text("No archived articles")
@@ -175,8 +186,4 @@ struct SetupView: View {
             print("Error saving changes: \(error.localizedDescription)")
         }
     }
-}
-
-#Preview {
-    SetupView()
 }
