@@ -63,6 +63,7 @@ struct ArticlesView: View {
 
             if !detailedView && tickerPosition == "Bottom" && isNewsTickerActive {
                 NewsTickerView()
+                    .frame(height: 50)
             }
         }
     }

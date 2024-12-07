@@ -18,18 +18,25 @@ struct NewsTickerView: View {
     @AppStorage("articleCount") var articleCount = 5
     
     var body: some View {
+        ZStack {
             if isNewsTickerActive {
                 TickerView(articles: articles, tickerOffset: tickerOffset, onTap: showDetails)
                     .onAppear {
                         fetchTopHeadlines()
                         startTickAnimation()
                     }
+                    .zIndex(0)
             }
-        if let article = selectedArticle {
-            LargeView(article: article) {
-                withAnimation {
-                    selectedArticle = nil
+            if let article = selectedArticle {
+                LargeView(article: article) {
+                    withAnimation {
+                        selectedArticle = nil
+                    }
                 }
+                .zIndex(1)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.black.opacity(0.5).edgesIgnoringSafeArea(.all))
+                .transition(.scale)
             }
         }
     }
@@ -98,6 +105,8 @@ struct TickerView: View {
                 }
             }
             .offset(x: tickerOffset)
+            .frame(maxHeight: 50)
+            Divider()
         }
     }
 }
@@ -108,14 +117,13 @@ struct LargeView: View {
     
     var body: some View {
         VStack {
-            Text(article.title)
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundStyle(.primary)
+            ZStack {
+                Text(article.title)
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.white)
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.gray.opacity(0.3),ignoresSafeAreaEdges: .all)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
         .transition(.scale)
     }
 }
