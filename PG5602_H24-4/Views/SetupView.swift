@@ -10,7 +10,7 @@ import SwiftData
 
 struct SetupView: View {
     @Environment(\.modelContext) var modelContext
-    @Query(filter: #Predicate<Article> { $0.isArchived == true }) var archivedArticles: [Article]
+    @Query(filter: #Predicate<Article> { $0.isArchived }) var archivedArticles: [Article]
     @AppStorage("darkmode") var isDarkMode = false
     @AppStorage("selectedCountry") var selectedCountry = "us"
     @AppStorage("selectedCategory") var selectedCategory = "All"
@@ -19,12 +19,19 @@ struct SetupView: View {
     @AppStorage("articleCount") var articleCount = 5
     @AppStorage("apiKey") var apiKey = ""
     @State var isKeySaved = false
+    @State var showConfDialog = false
+    @State var backgroundColor = Color.white
     
     let supportedCountries = ["All", "us", "no", "ca", "de", "fr"]
     let supportedCategories = ["All", "Business", "Entertainment", "General", "Health", "Science", "Sports", "Technology"]
     let tickerPositions = ["Top", "Bottom"]
     
     var body: some View {
+        setUpForm
+    }
+    
+    
+    var setUpForm: some View {
         Form {
             Section(header: Text("API Key")) {
                 HStack {
@@ -110,7 +117,9 @@ struct SetupView: View {
                         }
                         .buttonStyle(.plain)
                         
-                        Button(action: deleteAllArchivedArticles) {
+                        Button(action: {
+                            showConfDialog = true
+                        }) {
                             Text("Delete")
                                 .font(.body)
                                 .foregroundStyle(.white)
@@ -120,6 +129,13 @@ struct SetupView: View {
                                     RoundedRectangle(cornerRadius: 8)
                                         .fill(Color.red)
                                 )
+                                .confirmationDialog("This will delete permanently all archived articles.", isPresented: $showConfDialog, titleVisibility: .visible) {
+                                    Button("Delete") {
+                                        deleteAllArchivedArticles()
+                                    }
+                                    Button("Cancle", role: .cancel) {}
+                                        
+                                }
                         }
                         .buttonStyle(.plain)
                     }
@@ -128,9 +144,10 @@ struct SetupView: View {
                 }
             }
         }
-        
         .navigationTitle("Setup")
     }
+    
+    
     func saveApiKey(_ key: String) {
         UserDefaults.standard.set(key, forKey: "apiKey")
         isKeySaved = true
@@ -143,14 +160,6 @@ struct SetupView: View {
         }
         saveChanges()
     }
-    
-//    func deleteAllArchivedArticles() {
-//        for article in archivedArticles {
-//            modelContext.delete(article)
-//        }
-//        print("All archived articles deleted")
-//        saveChanges()
-//    }
     func deleteAllArchivedArticles() {
         archivedArticles.forEach { article in
             modelContext.delete(article)
@@ -158,7 +167,6 @@ struct SetupView: View {
         }
         saveChanges()
     }
-
     
     func saveChanges() {
         do {
@@ -172,4 +180,3 @@ struct SetupView: View {
 #Preview {
     SetupView()
 }
-

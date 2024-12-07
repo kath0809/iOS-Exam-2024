@@ -158,7 +158,7 @@ struct ArticleDetailView: View {
         let storedArticle = Article(
             article: article,
             category: selectedCategory,
-            note: "Optional user note"
+            note: ""
         )
         
         if let category = selectedCategory {
