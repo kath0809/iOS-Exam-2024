@@ -2,7 +2,6 @@
 //  ArticleListView.swift
 //  PG5602_H24-4
 //
-//  Created by Karima Thingvold on 07/12/2024.
 //
 
 import SwiftUI
@@ -40,7 +39,7 @@ struct ArticleListView: View {
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                     Button(action: {
-                        addNoteAction(article) // Bruker closure for å åpne NoteSheet
+                        addNoteAction(article)
                     }) {
                         Label("Add note", systemImage: "note")
                     }

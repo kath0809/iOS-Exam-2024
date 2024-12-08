@@ -2,8 +2,6 @@
 //  ArticlesView.swift
 //  PG5602_H24-4
 //
-//  Created by Karima Thingvold on 01/12/2024.
-//
 
 import SwiftUI
 import SwiftData
@@ -36,7 +34,7 @@ struct ArticlesView: View {
                     tickerTextColor: $tickerTextColor,
                     tickerFSize: $tickerFSize
                 )
-                    .frame(height: 50)
+                .frame(height: 50)
             }
             
             NavigationView {
@@ -53,10 +51,11 @@ struct ArticlesView: View {
                     )
                 }
             }
-            /// Works, but sometimes its to much to load so it takes som time.
-            .sheet(isPresented: $showNoteSheet, onDismiss: {
-                selectedArticle = nil
-            }) {
+                /// Works, but...
+            .sheet(isPresented: Binding(
+                get: { showNoteSheet && selectedArticle != nil },
+                set: { if !$0 { showNoteSheet = false; selectedArticle = nil } }
+            )) {
                 if let selectedArticle = selectedArticle {
                     ArticleNote(
                         article: selectedArticle,
@@ -66,12 +65,13 @@ struct ArticlesView: View {
                 }
             }
 
+            
             if !detailedView && tickerPosition == "Bottom" && isNewsTickerActive {
                 NewsTickerView(
                     tickerTextColor: $tickerTextColor,
                     tickerFSize: $tickerFSize
                 )
-                    .frame(height: 50)
+                .frame(height: 50)
             }
         }
     }
@@ -87,8 +87,11 @@ struct ArticlesView: View {
     func openNoteSheet(for article: Article) {
         selectedArticle = article
         noteText = article.note ?? ""
+        print("Selected Article: \(selectedArticle?.title ?? "None")")
+        print("Note Text: \(noteText)")
         showNoteSheet = true
     }
+
     
     func saveNote() {
         guard let article = selectedArticle else { return }

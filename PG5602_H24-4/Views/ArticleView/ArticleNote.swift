@@ -2,7 +2,6 @@
 //  ArticleNote.swift
 //  PG5602_H24-4
 //
-//  Created by Karima Thingvold on 07/12/2024.
 //
 
 import SwiftUI
@@ -13,7 +12,7 @@ struct ArticleNote: View {
     var onSave: () -> Void
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(alignment: .leading, spacing: 20) {
                 
                 Text("Add Note for:")
@@ -22,12 +21,12 @@ struct ArticleNote: View {
                 
                 Text(article.title)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .lineLimit(2)
                     .padding(.bottom)
                 
                 
-                TextField("Enter your note here...", text: $noteText)
+                TextField("Enter note here...", text: $noteText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
                 
@@ -38,7 +37,7 @@ struct ArticleNote: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.blue)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .cornerRadius(10)
                         .padding(.horizontal)
                 }
