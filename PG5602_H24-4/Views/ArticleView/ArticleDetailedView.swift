@@ -16,11 +16,13 @@ struct ArticleDetailView: View {
     @State var saveMessasge = ""
     @State var selectedCategory: Category? = nil
     @State var categories: [Category] = [
-        Category(name: "Technology"),
-        Category(name: "Economy"),
-        Category(name: "Politics"),
+        Category(name: "Business"),
+        Category(name: "Entertainment"),
+        Category(name: "General"),
+        Category(name: "Health"),
+        Category(name: "Science"),
         Category(name: "Sports"),
-        Category(name: "News"),
+        Category(name: "Technology")
     ]
     
     var body: some View {
@@ -117,17 +119,26 @@ struct ArticleDetailView: View {
                 }
                 
             }
+//            .onAppear {
+//                checkIfArticleIsSaved()
+//                checkIfCategoryIsChosen()
+//                if isArticleSaved {
+//                    let savedArticles = Article.fetchAll(in: modelContext)
+//                    if let storedArticle = savedArticles.first(where: { $0.url == article.url }) {
+//                        selectedCategory = storedArticle.category
+//                    }
+//                }
+//            }
             .onAppear {
                 checkIfArticleIsSaved()
-                checkIfCategoryIsChosen()
                 if isArticleSaved {
                     let savedArticles = Article.fetchAll(in: modelContext)
                     if let storedArticle = savedArticles.first(where: { $0.url == article.url }) {
                         selectedCategory = storedArticle.category
+                        isCategoryChosen = selectedCategory != nil
                     }
                 }
             }
-            
         }
     }
 
@@ -152,7 +163,7 @@ struct ArticleDetailView: View {
             saveArticleWithCategory()
         }
     }
-
+    
     func saveArticleWithCategory() {
         let storedArticle = Article(
             article: article,
@@ -161,14 +172,16 @@ struct ArticleDetailView: View {
         )
         
         if let category = selectedCategory {
-            category.articles.append(storedArticle);
-            modelContext.insert(category);
+            storedArticle.category = category
+            category.articles.append(storedArticle)
+            modelContext.insert(category)
         }
         
         modelContext.insert(storedArticle)
         do {
             try modelContext.save()
             isArticleSaved = true
+            print("Article \(article.title) with category \(selectedCategory?.name ?? "") saved")
         } catch {
             saveMessasge = "Failed to save article: \(error.localizedDescription)"
         }
