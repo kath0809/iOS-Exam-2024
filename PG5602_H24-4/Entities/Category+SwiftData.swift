@@ -12,7 +12,7 @@ import SwiftData
 
 extension Category {
     static func initializeDefaultCategories(in context: ModelContext) {
-        let defaultCategories = ["Technology", "Economy", "Politics", "Sports", "News"]
+        let defaultCategories = ["Business", "Entertainment", "General", "Health", "Science", "Sports", "Technology"]
         let existingCategories = fetchAll(in: context)
         
         for categoryName in defaultCategories {

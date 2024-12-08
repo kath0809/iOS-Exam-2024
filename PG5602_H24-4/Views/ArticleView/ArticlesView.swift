@@ -10,14 +10,14 @@ import SwiftData
 struct ArticlesView: View {
     @Environment(\.modelContext) var modelContext
     @Query(sort: \Article.savedDate, order: .reverse) var storedArticles: [Article]
-    @AppStorage("tickerPosition") private var tickerPosition: String = "Top"
-    @AppStorage("isNewsTickerActive") private var isNewsTickerActive: Bool = true
+    @AppStorage("tickerPosition") var tickerPosition: String = "Top"
+    @AppStorage("isNewsTickerActive") var isNewsTickerActive: Bool = true
     @State var detailedView = false
     @State var noteText = ""
     @State var showNoteSheet = false
     @State var selectedArticle: Article?
     @State var selectedCategory = "All"
-    let defaultCategories = ["Technology", "Economy", "Politics", "Sports", "News"]
+    let defaultCategories = ["Business", "Entertainment", "General", "Health", "Science", "Sports", "Technology"]
     @Binding var tickerTextColor: Color
     @Binding var tickerFSize: Double
     
@@ -25,6 +25,10 @@ struct ArticlesView: View {
         storedArticles.filter { article in
             !article.isArchived && (selectedCategory == "All" || article.category?.name == selectedCategory)
         }
+    }
+    
+    var hasAnyArticles: Bool {
+        !storedArticles.filter { !$0.isArchived }.isEmpty
     }
     
     var body: some View {
@@ -38,20 +42,33 @@ struct ArticlesView: View {
             }
             
             NavigationView {
-                if filteredArticles.isEmpty {
-                    NoArticlesView()
+                if hasAnyArticles {
+                    if filteredArticles.isEmpty {
+                        VStack {
+                            Text("No articles with selected category: \(selectedCategory).")
+                                .font(.headline)
+                                .padding()
+                            Spacer()
+                        }
+                        .toolbar {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                CategoryMenu(selectedCategory: $selectedCategory)
+                            }
+                        }
+                    } else {
+                        ArticleListView(
+                            articles: filteredArticles,
+                            archiveAction: archiveArticle,
+                            addNoteAction: openNoteSheet,
+                            selectedCategory: $selectedCategory,
+                            onDetailViewAppear: { detailedView = true },
+                            onDetailViewDisappear: { detailedView = false }
+                        )
+                    }
                 } else {
-                    ArticleListView(
-                        articles: filteredArticles,
-                        archiveAction: archiveArticle,
-                        addNoteAction: openNoteSheet,
-                        selectedCategory: $selectedCategory,
-                        onDetailViewAppear: { detailedView = true },
-                        onDetailViewDisappear: { detailedView = false }
-                    )
+                    NoArticlesView()
                 }
             }
-                /// Works, but...
             .sheet(isPresented: Binding(
                 get: { showNoteSheet && selectedArticle != nil },
                 set: { if !$0 { showNoteSheet = false; selectedArticle = nil } }
@@ -64,7 +81,7 @@ struct ArticlesView: View {
                     )
                 }
             }
-
+            
             
             if !detailedView && tickerPosition == "Bottom" && isNewsTickerActive {
                 NewsTickerView(
@@ -91,7 +108,7 @@ struct ArticlesView: View {
         print("Note Text: \(noteText)")
         showNoteSheet = true
     }
-
+    
     
     func saveNote() {
         guard let article = selectedArticle else { return }
