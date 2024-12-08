@@ -32,10 +32,6 @@ struct MainLayoutView: View {
                     tickerFSize: $tickerFSize
                 )
             }
-            
-//            Tab("TestView", systemImage: "heart.fill") {
-//                APITest()
-//            }
         }
     }
 }

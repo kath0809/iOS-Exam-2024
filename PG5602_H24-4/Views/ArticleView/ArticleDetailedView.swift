@@ -2,7 +2,6 @@
 //  ArticleDetailedView.swift
 //  PG5602_H24-4
 //
-//  Created by Karima Thingvold on 03/12/2024.
 //
 
 import SwiftUI
@@ -89,14 +88,14 @@ struct ArticleDetailView: View {
             .padding()
             
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button(action: toggleSaveArticle) {
                         Image(systemName: isArticleSaved ? "bookmark.fill" : "bookmark")
                             .foregroundStyle(isArticleSaved ? .blue : .primary)
                     }
                 }
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Picker("Select Category", selection: $selectedCategory) {
                             Text("None").tag(Optional<Category>.none)

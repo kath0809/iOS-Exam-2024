@@ -2,8 +2,6 @@
 //  NewsTickerView.swift
 //  PG5602_H24-4
 //
-//  Created by Karima Thingvold on 04/12/2024.
-//
 
 import SwiftUI
 
@@ -28,12 +26,12 @@ struct NewsTickerView: View {
                     articles: articles,
                     tickerOffset: tickerOffset,
                     onTap: showDetails
-                    )
-                    .onAppear {
-                        fetchTopHeadlines()
-                        startTickAnimation()
-                    }
-                    .zIndex(0)
+                )
+                .onAppear {
+                    fetchTopHeadlines()
+                    startTickAnimation()
+                }
+                .zIndex(0)
             }
             if let article = selectedArticle {
                 LargeView(article: article) {
@@ -48,35 +46,35 @@ struct NewsTickerView: View {
             }
         }
     }
-
-        func startTickAnimation() {
-            let width = CGFloat(articles.count) * 700
-            let duration = Double(articles.count) * 5
-
-            tickerOffset = UIScreen.main.bounds.width
-
-            withAnimation(.linear(duration: duration).repeatForever(autoreverses: false)) {
-                tickerOffset = -width
-            }
+    
+    func startTickAnimation() {
+        let width = CGFloat(articles.count) * 700
+        let duration = Double(articles.count) * 5
+        
+        tickerOffset = UIScreen.main.bounds.width
+        
+        withAnimation(.linear(duration: duration).repeatForever(autoreverses: false)) {
+            tickerOffset = -width
         }
-
-        func fetchTopHeadlines() {
-            let apiService = NewsApiService()
-            let country = selectedCountry == "us" ? nil : selectedCountry
-            let category = selectedCategory == "technology" ? nil : selectedCategory
-
-            apiService.fetchTopHeadlines(country: country, category: category, pageSize: articleCount) { result in
-                switch result {
-                case .success(let fetchedArticles):
-                    DispatchQueue.main.async {
-                        self.articles = fetchedArticles
-                        self.startTickAnimation()
-                    }
-                case .failure(let error):
-                    print("Error fetching top news: \(error.localizedDescription)")
+    }
+    
+    func fetchTopHeadlines() {
+        let apiService = NewsApiService()
+        let country = selectedCountry == "us" ? nil : selectedCountry
+        let category = selectedCategory == "technology" ? nil : selectedCategory
+        
+        apiService.fetchTopHeadlines(country: country, category: category, pageSize: articleCount) { result in
+            switch result {
+            case .success(let fetchedArticles):
+                DispatchQueue.main.async {
+                    self.articles = fetchedArticles
+                    self.startTickAnimation()
                 }
+            case .failure(let error):
+                print("Error fetching top news: \(error.localizedDescription)")
             }
         }
+    }
     
     func showDetails(article: NewsArticle) {
         withAnimation {
