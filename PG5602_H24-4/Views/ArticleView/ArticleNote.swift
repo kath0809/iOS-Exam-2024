@@ -13,23 +13,26 @@ struct ArticleNote: View {
     
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 10) {
                 
                 Text("Add Note for:")
                     .font(.headline)
+                    .foregroundStyle(.black)
                     .padding(.top)
                 
                 Text(article.title)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.black)
                     .lineLimit(2)
                     .padding(.bottom)
                 
-                
                 TextField("Enter note here...", text: $noteText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .foregroundStyle(.black)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .padding(.horizontal)
-                
+                    
                 Spacer()
                 
                 Button(action: onSave) {
@@ -38,12 +41,14 @@ struct ArticleNote: View {
                         .padding()
                         .background(Color.blue)
                         .foregroundStyle(.white)
-                        .cornerRadius(10)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                         .padding(.horizontal)
                 }
             }
+            
             .padding()
             .navigationTitle("Add Note")
+            .noteBackground()
         }
     }
 }
