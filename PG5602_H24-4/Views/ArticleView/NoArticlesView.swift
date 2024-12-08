@@ -30,3 +30,7 @@ struct NoArticlesView: View {
         .background(Color(UIColor.systemBackground))
     }
 }
+
+#Preview {
+    NoArticlesView()
+}

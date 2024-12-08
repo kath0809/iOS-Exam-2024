@@ -11,7 +11,7 @@ struct NewsTickerView: View {
     @State var tickerOffset: CGFloat = 0
     @State var isDetailedView = false
     @AppStorage("selectedCountry") var selectedCountry = "us"
-    @AppStorage("selectedCategory") var selectedCategory = "technology"
+    @AppStorage("selectedCategory") var selectedCategory = "Technology"
     @AppStorage("isNewsTickerActive") var isNewsTickerActive = true
     @AppStorage("articleCount") var articleCount = 5
     @Binding var tickerTextColor: Color
@@ -134,5 +134,12 @@ struct LargeView: View {
         }
         .transition(.scale)
     }
+}
+
+#Preview {
+    NewsTickerView(
+        tickerTextColor: .constant(.tickerText),
+        tickerFSize: .constant(16.0)
+    )
 }
 

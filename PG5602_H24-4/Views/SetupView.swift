@@ -12,7 +12,7 @@ struct SetupView: View {
     @Query(filter: #Predicate<Article> { $0.isArchived }) var archivedArticles: [Article]
     @AppStorage("darkmode") var isDarkMode = false
     @AppStorage("selectedCountry") var selectedCountry = "us"
-    @AppStorage("selectedCategory") var selectedCategory = "All"
+    @AppStorage("selectedCategory") var selectedCategory = "Technology"
     @AppStorage("isNewsTickerActive") var isNewsTickerActive = true
     @AppStorage("tickerPosition") var tickerPosition = "Top"
     @AppStorage("articleCount") var articleCount = 5
@@ -27,11 +27,6 @@ struct SetupView: View {
     let tickerPositions = ["Top", "Bottom"]
     
     var body: some View {
-        setUpForm
-    }
-    
-    
-    var setUpForm: some View {
         Form {
             Section(header: Text("API Key")) {
                 HStack {
@@ -144,7 +139,7 @@ struct SetupView: View {
                                         deleteAllArchivedArticles()
                                     }
                                     Button("Cancle", role: .cancel) {}
-                                        
+                                    
                                 }
                         }
                         .buttonStyle(.plain)
@@ -185,4 +180,11 @@ struct SetupView: View {
             print("Error saving changes: \(error.localizedDescription)")
         }
     }
+}
+
+#Preview {
+    SetupView(
+        tickerTextColor: .constant(.tickerText),
+        tickerFSize: .constant(16.0)
+        )
 }
