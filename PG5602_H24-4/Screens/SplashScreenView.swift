@@ -2,7 +2,6 @@
 //  SplashScreen.swift
 //  PG5602_H24-4
 //
-//  Created by Karima Thingvold on 25/11/2024.
 //
 
 import SwiftUI
