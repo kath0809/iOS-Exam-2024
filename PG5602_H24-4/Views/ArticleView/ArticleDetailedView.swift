@@ -108,10 +108,10 @@ struct ArticleDetailView: View {
                         .onChange(of: selectedCategory) { oldValue, newValue in
                             guard oldValue != newValue else { return }
                             print("Changed from \(oldValue?.name ?? "None") to \(newValue?.name ?? "None")")
-                            isCategoryChosen = newValue != nil
+                            if let savedArticles = Article.fetchAll(in: modelContext).first(where: { $0.url == article.url }) {
+                                updateCategory(for: savedArticles, to: newValue)
+                            }
                         }
-                        
-                        
                     } label: {
                         Image(systemName: isCategoryChosen ? "tag.fill" : "tag")
                             .foregroundStyle(isCategoryChosen ? .blue : .primary)
@@ -119,16 +119,6 @@ struct ArticleDetailView: View {
                 }
                 
             }
-//            .onAppear {
-//                checkIfArticleIsSaved()
-//                checkIfCategoryIsChosen()
-//                if isArticleSaved {
-//                    let savedArticles = Article.fetchAll(in: modelContext)
-//                    if let storedArticle = savedArticles.first(where: { $0.url == article.url }) {
-//                        selectedCategory = storedArticle.category
-//                    }
-//                }
-//            }
             .onAppear {
                 checkIfArticleIsSaved()
                 if isArticleSaved {
@@ -187,4 +177,24 @@ struct ArticleDetailView: View {
         }
         showMessage = true
     }
+    
+    func updateCategory(for article: Article, to newCategory: Category?) {
+        article.category = newCategory
+        if let newCategory = newCategory {
+            newCategory.articles.append(article)
+            modelContext.insert(newCategory)
+        }
+        saveChanges()
+    }
+    
+    func saveChanges() {
+        do {
+            try modelContext.save()
+            print("Changed category to \(selectedCategory?.name ?? "")")
+        } catch {
+            print("Error saving changes: \(error.localizedDescription)")
+        }
+    }
+
+
 }
