@@ -8,7 +8,7 @@ import SwiftUI
 
 struct CategoryMenu: View {
     @Binding var selectedCategory: String
-    let categories = ["Business", "Entertainment", "General", "Health", "Science", "Sports", "Technology"]
+    let categories = [ "All","Business", "Entertainment", "General", "Health", "Science", "Sports", "Technology"]
     
     var body: some View {
         Menu {

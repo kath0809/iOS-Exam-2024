@@ -32,66 +32,71 @@ struct ArticlesView: View {
     }
     
     var body: some View {
-        VStack {
-            if !detailedView && tickerPosition == "Top" && isNewsTickerActive {
-                NewsTickerView(
-                    tickerTextColor: $tickerTextColor,
-                    tickerFSize: $tickerFSize
-                )
-                .frame(height: 50)
-            }
-            
-            NavigationView {
-                if hasAnyArticles {
-                    if filteredArticles.isEmpty {
-                        VStack {
-                            Text("No articles with selected category: \(selectedCategory).")
-                                .font(.headline)
-                                .padding()
-                            Spacer()
-                        }
-                        .toolbar {
-                            ToolbarItem(placement: .topBarTrailing) {
-                                CategoryMenu(selectedCategory: $selectedCategory)
+            VStack {
+                if !detailedView && tickerPosition == "Top" && isNewsTickerActive {
+                    NewsTickerView(
+                        tickerTextColor: $tickerTextColor,
+                        tickerFSize: $tickerFSize
+                    )
+                    .frame(height: 50)
+                }
+                
+                NavigationView {
+                    if hasAnyArticles {
+                        if filteredArticles.isEmpty {
+                            VStack {
+                                Text("No articles with selected category:")
+                                    .font(.headline)
+                                    .padding()
+                                Text("\(selectedCategory).")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.blue)
+                                Spacer()
                             }
+                            .toolbar {
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    CategoryMenu(selectedCategory: $selectedCategory)
+                                }
+                            }
+                        } else {
+                            ArticleListView(
+                                articles: filteredArticles,
+                                archiveAction: archiveArticle,
+                                addNoteAction: openNoteSheet,
+                                selectedCategory: $selectedCategory,
+                                onDetailViewAppear: { detailedView = true },
+                                onDetailViewDisappear: { detailedView = false }
+                            )
                         }
                     } else {
-                        ArticleListView(
-                            articles: filteredArticles,
-                            archiveAction: archiveArticle,
-                            addNoteAction: openNoteSheet,
-                            selectedCategory: $selectedCategory,
-                            onDetailViewAppear: { detailedView = true },
-                            onDetailViewDisappear: { detailedView = false }
+                        NoArticlesView()
+                    }
+                }
+                .sheet(isPresented: Binding(
+                    get: { showNoteSheet && selectedArticle != nil },
+                    set: { if !$0 { showNoteSheet = false; selectedArticle = nil } }
+                )) {
+                    if let selectedArticle = selectedArticle {
+                        ArticleNote(
+                            article: selectedArticle,
+                            noteText: $noteText,
+                            onSave: saveNote
                         )
                     }
-                } else {
-                    NoArticlesView()
                 }
-            }
-            .sheet(isPresented: Binding(
-                get: { showNoteSheet && selectedArticle != nil },
-                set: { if !$0 { showNoteSheet = false; selectedArticle = nil } }
-            )) {
-                if let selectedArticle = selectedArticle {
-                    ArticleNote(
-                        article: selectedArticle,
-                        noteText: $noteText,
-                        onSave: saveNote
+                
+                
+                if !detailedView && tickerPosition == "Bottom" && isNewsTickerActive {
+                    NewsTickerView(
+                        tickerTextColor: $tickerTextColor,
+                        tickerFSize: $tickerFSize
                     )
+                    .frame(height: 50)
                 }
-            }
-            
-            
-            if !detailedView && tickerPosition == "Bottom" && isNewsTickerActive {
-                NewsTickerView(
-                    tickerTextColor: $tickerTextColor,
-                    tickerFSize: $tickerFSize
-                )
-                .frame(height: 50)
             }
         }
-    }
+
     
     func archiveArticle(at offsets: IndexSet) {
         for index in offsets {

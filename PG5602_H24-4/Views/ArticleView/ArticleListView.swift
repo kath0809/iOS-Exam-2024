@@ -13,7 +13,7 @@ struct ArticleListView: View {
     @Binding var selectedCategory: String
     let onDetailViewAppear: () -> Void
     let onDetailViewDisappear: () -> Void
-
+    
     var body: some View {
         List {
             ForEach(articles) { article in
@@ -23,13 +23,36 @@ struct ArticleListView: View {
                         .onDisappear { onDetailViewDisappear() }
                 ) {
                     VStack(alignment: .leading) {
-                        Text(article.title)
-                            .font(.headline)
+                        HStack {
+                            Text(article.title)
+                                .font(.headline)
+                            
+                            Spacer()
+                            
+                            if let category = article.category {
+                                Text(category.name)
+                                    .font(.caption)
+                                    .padding()
+                                    .background(Color.gray.opacity(0.1))
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .foregroundStyle(.primary)
+                            }
+                        }
+                        
                         if let description = article.articleDescription {
                             Text(description)
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                            
+                            Divider()
                         }
+                        
+                        Text("Saved at: \(formatDate(article.savedDate))")
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.primary)
+                        
                         if let note = article.note {
                             Text("Note: \(note)")
                                 .font(.caption)
@@ -44,7 +67,7 @@ struct ArticleListView: View {
                         Label("Add note", systemImage: "note")
                     }
                     .tint(.blue)
-
+                    
                     Button(role: .destructive) {
                         if let index = articles.firstIndex(of: article) {
                             archiveAction(IndexSet(integer: index))
@@ -62,4 +85,11 @@ struct ArticleListView: View {
             }
         }
     }
+}
+
+func formatDate(_ date: Date) -> String {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .medium
+    formatter.timeStyle = .short
+    return formatter.string(from: date)
 }
