@@ -17,12 +17,13 @@ struct SetupView: View {
     @AppStorage("tickerPosition") var tickerPosition = "Top"
     @AppStorage("articleCount") var articleCount = 5
     @AppStorage("apiKey") var apiKey = ""
+    @AppStorage("newCategory") var newCategory = ""
     @State var isKeySaved = false
     @State var showConfDialog = false
     @Binding var tickerTextColor: Color
     @Binding var tickerFSize: Double
     
-    let supportedCountries = ["All", "us", "no", "ca", "de", "fr"]
+    let supportedCountries = ["All", "us", "no", "ca", "bg", "se", "dk", "au", "ru"]
     let supportedCategories = ["All", "Business", "Entertainment", "General", "Health", "Science", "Sports", "Technology"]
     let tickerPositions = ["Top", "Bottom"]
     
