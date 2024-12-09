@@ -10,6 +10,7 @@ struct NewsTickerView: View {
     @State var selectedArticle: NewsArticle?
     @State var tickerOffset: CGFloat = 0
     @State var isDetailedView = false
+    @State var noArticlesMsg: String? = nil
     @AppStorage("selectedCountry") var selectedCountry = "us"
     @AppStorage("selectedCategory") var selectedCategory = "Technology"
     @AppStorage("isNewsTickerActive") var isNewsTickerActive = true
@@ -20,18 +21,25 @@ struct NewsTickerView: View {
     var body: some View {
         ZStack {
             if isNewsTickerActive {
-                TickerView(
-                    tickerTextColor: $tickerTextColor,
-                    tickerFSize: $tickerFSize,
-                    articles: articles,
-                    tickerOffset: tickerOffset,
-                    onTap: showDetails
-                )
-                .onAppear {
-                    fetchTopHeadlines()
-                    startTickAnimation()
+                if let noArticlesMsg {
+                    Text(noArticlesMsg)
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                } else {
+                    TickerView(
+                        tickerTextColor: $tickerTextColor,
+                        tickerFSize: $tickerFSize,
+                        articles: articles,
+                        tickerOffset: tickerOffset,
+                        onTap: showDetails
+                    )
+                    .onAppear {
+                        fetchTopHeadlines()
+                        startTickAnimation()
+                    }
+                    .zIndex(0)
                 }
-                .zIndex(0)
             }
             if let article = selectedArticle {
                 LargeView(article: article) {
@@ -44,6 +52,12 @@ struct NewsTickerView: View {
                 .background(Color.black.opacity(0.5).edgesIgnoringSafeArea(.all))
                 .transition(.scale)
             }
+        }
+        .onChange(of: selectedCountry) { oldValue, newValue in
+            fetchTopHeadlines()
+        }
+        .onChange(of: selectedCategory) { oldValue, newValue in
+            fetchTopHeadlines()
         }
     }
     
@@ -64,14 +78,20 @@ struct NewsTickerView: View {
         let category = selectedCategory == "technology" ? nil : selectedCategory
         
         apiService.fetchTopHeadlines(country: country, category: category, pageSize: articleCount) { result in
-            switch result {
-            case .success(let fetchedArticles):
-                DispatchQueue.main.async {
-                    self.articles = fetchedArticles
-                    self.startTickAnimation()
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let fetchedArticles):
+                    if fetchedArticles.isEmpty {
+                        self.noArticlesMsg = "No articles found for the selected country/category."
+                        self.articles = []
+                    } else {
+                        self.articles = fetchedArticles
+                        self.noArticlesMsg = nil
+                        self.startTickAnimation()
+                    }
+                case .failure(let error):
+                    self.noArticlesMsg = "Error fetching articles: \(error.localizedDescription)"
                 }
-            case .failure(let error):
-                print("Error fetching top news: \(error.localizedDescription)")
             }
         }
     }
