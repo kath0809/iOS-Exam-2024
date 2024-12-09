@@ -31,6 +31,7 @@ struct ArticleListView: View {
                             
                             if let category = article.category {
                                 Text(category.name)
+                                
                                     .font(.caption)
                                     .padding()
                                     .background(Color.gray.opacity(0.1))
