@@ -13,74 +13,6 @@ enum SortOption: String, CaseIterable {
     case publishedAt = "Newest"
 }
 
-//struct SearchView: View {
-//    @Environment(\.modelContext) var modelContext
-//    @Query(sort: \Search.timestamp, order: .reverse) var searchHistory: [Search]
-//    @State var query: String = ""
-//    @State var articles: [NewsArticle] = []
-//    @State var isLoading = false
-//    @State var errorMessage: String?
-//    @State var selectedSortOption: SortOption = .relevance
-//    
-//    var body: some View {
-//        NavigationStack {
-//            VStack {
-//                HStack {
-//                    ForEach(SortOption.allCases, id: \.self) { option in
-//                        Button(action: {
-//                            selectedSortOption = option
-//                            sortArticles()
-//                        }) {
-//                            Text(option.rawValue)
-//                                .padding()
-//                                .background(selectedSortOption == option ? Color.blue : Color.gray.opacity(0.3))
-//                                .foregroundStyle(.white)
-//                                .clipShape(RoundedRectangle(cornerRadius: 8))
-//                        }
-//                    }
-//                }
-//                .padding()
-//                
-//                if isLoading || errorMessage != nil {
-//                    ZStack {
-//                        if isLoading {
-//                            ProgressView("Loading articles")
-//                                .controlSize(.large)
-//                                .tint(.blue)
-//                        } else if let errorMessage = errorMessage {
-//                            Text(errorMessage)
-//                                .foregroundStyle(.red)
-//                        }
-//                    }
-//                    .frame(maxWidth: .infinity)
-//                    .padding()
-//
-//                } else {
-//                    List(articles, id: \.url) { article in
-//                        NavigationLink(destination: ArticleDetailView(article: article)) {
-//                            VStack(alignment: .leading) {
-//                                Text(article.title)
-//                                    .font(.headline)
-//                                Text(article.description ?? "No description available")
-//                                    .font(.subheadline)
-//                                    .foregroundStyle(.secondary)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            .navigationTitle("Search for anything...")
-//            .searchable(text: $query, placement: .toolbar, prompt: "Search for articles")
-//            .onChange(of: query) { oldValue, newValue in
-//                if newValue.isEmpty {
-//                    articles = []
-//                } else {
-//                    performSearch()
-//                }
-//            }
-//        }
-//    }
-
 struct SearchView: View {
     @Environment(\.modelContext) var modelContext
     @Query(sort: \Search.timestamp, order: .reverse) var searchHistory: [Search]
@@ -93,8 +25,42 @@ struct SearchView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Hovedinnholdet i grensesnittet
                 VStack {
+                    HStack {
+                        TextField("Search for articles", text: $query, onCommit: {
+                            performSearch()
+                        })
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        
+                        if !searchHistory.isEmpty {
+                            Menu {
+                                ForEach(searchHistory) { search in
+                                    Button(action: {
+                                        query = search.query
+                                        performSearch()
+                                    }) {
+                                        Text(search.query)
+                                    }
+                                }
+                                Button(action: clearSearchHistory) {
+                                    HStack {
+                                        Text("Clear History")
+                                            .font(.headline)
+                                        Spacer()
+                                        Image(systemName: "trash")
+                                            .foregroundStyle(.red)
+                                    }
+                                    .padding(8)
+                                }
+                            } label: {
+                                Image(systemName: "arrowtriangle.down.circle")
+                                    .foregroundColor(.blue)
+                                    .imageScale(.large)
+                            }
+                        }
+                    }
+                    .padding()
+                    
                     HStack {
                         ForEach(SortOption.allCases, id: \.self) { option in
                             Button(action: {
@@ -123,8 +89,6 @@ struct SearchView: View {
                         }
                     }
                 }
-                
-                // Overlay for ProgressView og feilmelding
                 if isLoading || errorMessage != nil {
                     VStack {
                         if isLoading {
@@ -139,21 +103,15 @@ struct SearchView: View {
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.black.opacity(0.4)) // Gjør bakgrunnen semi-transparent
+                    .background(Color.black.opacity(0.4))
                     .edgesIgnoringSafeArea(.all)
                 }
             }
-            .navigationTitle("Search for anything...")
-            .searchable(text: $query, placement: .toolbar, prompt: "Search for articles")
-            .onChange(of: query) { oldValue, newValue in
-                if newValue.isEmpty {
-                    articles = []
-                } else {
-                    performSearch()
-                }
-            }
+            .navigationTitle("Search")
         }
     }
+    
+    
     
     func search() {
         guard !query.isEmpty else { return }
@@ -189,6 +147,9 @@ struct SearchView: View {
     
     func performSearch() {
         guard !query.isEmpty else { return }
+        
+        saveSearch(query)
+        
         isLoading = true
         errorMessage = nil
         
@@ -205,9 +166,33 @@ struct SearchView: View {
             }
         }
     }
+    
+    func saveSearch(_ query: String) {
+        if searchHistory.contains(where: { $0.query == query }) {
+            return
+        }
+        let newSearch = Search(query: query)
+        modelContext.insert(newSearch)
+        do {
+            try modelContext.save()
+            print("Search saved: '\(query)'.")
+        } catch {
+            print("Error saving search: \(error)")
+        }
+    }
+    func clearSearchHistory() {
+        for search in searchHistory {
+            modelContext.delete(search)
+        }
+        do {
+            try modelContext.save()
+            print("Search history cleared.")
+        } catch {
+            print("Error clearing search history: \(error)")
+        }
+    }
 }
 
 #Preview {
     SearchView()
 }
-
