@@ -147,7 +147,7 @@ struct SetupView: View {
                 }
             }
         }
-        .confirmationDialog("This will delete permanently all archived articles.", isPresented: $showConfDialog, titleVisibility: .visible) {
+        .confirmationDialog("Are you sure you want to delete all archived articles?", isPresented: $showConfDialog, titleVisibility: .visible) {
             Button("Delete") {
                 deleteAllArchivedArticles()
             }
