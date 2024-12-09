@@ -11,10 +11,9 @@ class NewsApiService {
     private let topHeadlinesURL = "https://newsapi.org/v2/top-headlines"
     private let everythingURL = "https://newsapi.org/v2/everything"
 
-    // Bruk min nøkkel(defaultApiKey) om det ikke finnes en apiKey
+    // Ved manglende "apiKey" bruk "defaultApiKey"(APIConfig.defaultApiKey).
     private func getApiKey() -> String? {
         let apiKey = UserDefaults.standard.string(forKey: "apiKey") ?? APIConfig.defaultApiKey
-        print("Api key used: \(apiKey)")
         return apiKey.isEmpty ? nil : apiKey
     }
     
@@ -24,7 +23,6 @@ class NewsApiService {
 //        print("Api key used: \(apiKey)")
 //        return apiKey?.isEmpty == false ? apiKey : nil
 //    }
-    
     
     private func performRequest(endpoint: String, queryItems: [URLQueryItem], completion: @escaping (Result<[NewsArticle], Error>) -> Void) {
         guard let apiKey = getApiKey() else {
@@ -46,8 +44,6 @@ class NewsApiService {
             return
         }
         
-        print("Requesting URL: \(url)")
-        
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 completion(.failure(error))
@@ -59,8 +55,11 @@ class NewsApiService {
                 return
             }
             
+            // Print informasjon om resultat, hvilken api nøkkel som er brukt i kallet og url - viser eks land og kategori det søkes på.
             print("Raw Response:")
             data.prettyPrintJSON()
+            print("Api key used: \(apiKey)")
+            print("Requesting URL: \(url)")
             
             do {
                 let decoder = JSONDecoder()
@@ -74,7 +73,7 @@ class NewsApiService {
     }
 
     func fetchNews(endpoint: String, query: String? = nil, completion: @escaping (Result<[NewsArticle], Error>) -> Void) {
-        //
+        // For å kjøre mock data og ikke api kall.
 //#if DEBUG
 //    completion(.success(MockData.articles))
 //    return
@@ -91,16 +90,17 @@ class NewsApiService {
         performRequest(endpoint: endpoint, queryItems: queryItems, completion: completion)
     }
     
+    // As of December 9th, several of the tested countries have no top cases in the API, this has been tested in a browser and compared to the URL the API connects to, eg: https://newsapi.org/v2/top-headlines?country=ca&apiKey=3cefd6c6ab294e36bbd0ba6124fee341 returns:  {"status":"ok","totalResults":0,"articles":[]}
     func fetchTopHeadlines(country: String? = nil, category: String? = nil, pageSize: Int = 20, completion: @escaping (Result<[NewsArticle], Error>) -> Void) {
         //
-#if DEBUG
-    completion(.success(MockData.articles))
-    return
-    #endif
-    guard let defaultApiKey = getApiKey() else {
-        completion(.failure(NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "API key is missing"])))
-        return
-    }
+//#if DEBUG
+//    completion(.success(MockData.articles))
+//    return
+//    #endif
+//    guard let defaultApiKey = getApiKey() else {
+//        completion(.failure(NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "API key is missing"])))
+//        return
+//    }
         //
         var queryItems = [
             URLQueryItem(name: "pageSize", value: "\(pageSize)")
@@ -108,8 +108,6 @@ class NewsApiService {
         
         if let country = country, country != "All" {
             queryItems.append(URLQueryItem(name: "country", value: country))
-        } else {
-            queryItems.append(URLQueryItem(name: "country", value: "us"))
         }
 
         if let category = category, category != "All" {
@@ -119,8 +117,6 @@ class NewsApiService {
         performRequest(endpoint: topHeadlinesURL, queryItems: queryItems, completion: completion)
     }
 
-
-    
     func searchArticles(query: String, sortBy: String, completion: @escaping (Result<[NewsArticle], Error>) -> Void) {
             //
 //    #if DEBUG
@@ -149,12 +145,12 @@ struct MockData {
     static let articles = [
         NewsArticle(author: "BBC",title: "Apple buys Android",  description: "As of 2026 Apple will be the only smartphone manufacturer in the world", url: "https://example.com/1", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-01T10:00:00Z"),
     
-        NewsArticle(author: "Fox News",title: "Kamela Harris wins election",  description: "Americas new President is Kamela Harris, the first Black woman to serve as President", url: "https://example.com/2", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-01T10:00:00Z"),
+        NewsArticle(author: "Fox News",title: "Kamela Harris wins election",  description: "Americas new President is Kamela Harris, the first Black woman to serve as President", url: "https://example.com/2", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-11-22"),
         
-        NewsArticle(author: "DailyNews",title: "Biden as santa?",  description: "Biden will be available as santa at Christmas", url: "https://example.com/3", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-01T10:00:00Z"),
+        NewsArticle(author: "DailyNews",title: "Trump as santa?",  description: "Trump will be available as santa at Christmas", url: "https://example.com/3", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-03"),
         
-        NewsArticle(author: "VG",title: "Erna trekker seg som statsminister kandidat",  description: "Sier hun vil fokusere på familie og aksjer", url: "https://example.com/4", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-01T10:00:00Z"),
+        NewsArticle(author: "VG",title: "Erna trekker seg som statsminister kandidat",  description: "Sier hun vil fokusere på familie og aksjer", url: "https://example.com/4", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-01"),
         
-        NewsArticle(author: "NYT",title: "Christmas 2024 - is cancelled",  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", url: "https://example.com/5", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-12-01T10:00:00Z"),
+        NewsArticle(author: "NYT",title: "Christmas 2024 - is cancelled",  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", url: "https://example.com/5", urlToImage: "https://thumbs.dreamstime.com/b/cute-kawaii-christmas-ghost-festive-holiday-cartoon-hand-drawing-adorable-pose-297512032.jpg", publishedAt: "2024-11-01"),
     ]
 }

@@ -126,7 +126,7 @@ struct TickerView: View {
                         .lineLimit(1)
                         .padding()
                         .background(.tickerBackground)
-                        .cornerRadius(10)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                         .onTapGesture {
                             onTap(article)
                         }

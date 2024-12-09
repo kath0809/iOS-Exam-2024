@@ -54,7 +54,7 @@ struct SearchView: View {
                                 }
                             } label: {
                                 Image(systemName: "arrowtriangle.down.circle")
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(.blue)
                                     .imageScale(.large)
                             }
                         }

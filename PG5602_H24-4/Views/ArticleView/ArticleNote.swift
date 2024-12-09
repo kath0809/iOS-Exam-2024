@@ -32,7 +32,7 @@ struct ArticleNote: View {
                     .foregroundStyle(.black)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .padding(.horizontal)
-                    
+                
                 Spacer()
                 
                 Button(action: onSave) {
@@ -45,10 +45,10 @@ struct ArticleNote: View {
                         .padding(.horizontal)
                 }
             }
-            
             .padding()
             .navigationTitle("Add Note")
             .noteBackground()
         }
     }
 }
+

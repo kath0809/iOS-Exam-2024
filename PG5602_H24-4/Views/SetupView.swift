@@ -29,6 +29,7 @@ struct SetupView: View {
     
     var body: some View {
         Form {
+            
             Section(header: Text("API Key")) {
                 HStack {
                     TextField("Enter API Key...", text: $apiKey)
@@ -61,6 +62,7 @@ struct SetupView: View {
                         .padding(.top, 8)
                 }
             }
+            
             Section(header: Text("Appearance")) {
                 Toggle("Dark Mode", isOn: $isDarkMode)
                     .onChange(of: isDarkMode) { _, newValue in
@@ -69,6 +71,7 @@ struct SetupView: View {
                         }
                     }
             }
+            
             Section(header: Text("Country & Category")) {
                 Picker("Country", selection: $selectedCountry) {
                     ForEach(supportedCountries, id: \.self) { country in
@@ -82,6 +85,7 @@ struct SetupView: View {
                     }
                 }
             }
+            
             Section(header: Text("News Ticker Settings")) {
                 Toggle("Activate News Ticker", isOn: $isNewsTickerActive)
                 Stepper("Article amount: \(articleCount)", value: $articleCount, in: 1...10)
@@ -135,13 +139,6 @@ struct SetupView: View {
                                     RoundedRectangle(cornerRadius: 8)
                                         .fill(Color.red)
                                 )
-                                .confirmationDialog("This will delete permanently all archived articles.", isPresented: $showConfDialog, titleVisibility: .visible) {
-                                    Button("Delete") {
-                                        deleteAllArchivedArticles()
-                                    }
-                                    Button("Cancle", role: .cancel) {}
-                                    
-                                }
                         }
                         .buttonStyle(.plain)
                     }
@@ -149,6 +146,13 @@ struct SetupView: View {
                     .padding()
                 }
             }
+        }
+        .confirmationDialog("This will delete permanently all archived articles.", isPresented: $showConfDialog, titleVisibility: .visible) {
+            Button("Delete") {
+                deleteAllArchivedArticles()
+            }
+            Button("Cancle", role: .cancel) {}
+            
         }
         .navigationTitle("Setup")
     }
@@ -187,5 +191,5 @@ struct SetupView: View {
     SetupView(
         tickerTextColor: .constant(.tickerText),
         tickerFSize: .constant(16.0)
-        )
+    )
 }

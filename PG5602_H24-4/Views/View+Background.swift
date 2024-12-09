@@ -24,7 +24,9 @@ extension View {
 
 #Preview {
     VStack {
-        Text("Hello, World!")
+        Text("World, Hello")
+            .padding()
+        Image(systemName: "sunrise")
     }
     .noteBackground()
 }

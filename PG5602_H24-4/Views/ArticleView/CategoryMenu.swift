@@ -28,3 +28,8 @@ struct CategoryMenu: View {
         }
     }
 }
+
+#Preview {
+    @Previewable @State var selectedCategory = "All"
+    return CategoryMenu(selectedCategory: $selectedCategory)
+}

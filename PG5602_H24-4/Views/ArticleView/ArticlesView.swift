@@ -6,7 +6,6 @@
 import SwiftUI
 import SwiftData
 
-
 struct ArticlesView: View {
     @Environment(\.modelContext) var modelContext
     @Query(sort: \Article.savedDate, order: .reverse) var storedArticles: [Article]
@@ -32,71 +31,69 @@ struct ArticlesView: View {
     }
     
     var body: some View {
-            VStack {
-                if !detailedView && tickerPosition == "Top" && isNewsTickerActive {
-                    NewsTickerView(
-                        tickerTextColor: $tickerTextColor,
-                        tickerFSize: $tickerFSize
-                    )
-                    .frame(height: 50)
-                }
-                
-                NavigationView {
-                    if hasAnyArticles {
-                        if filteredArticles.isEmpty {
-                            VStack {
-                                Text("No articles with selected category:")
-                                    .font(.headline)
-                                    .padding()
-                                Text("\(selectedCategory).")
-                                    .font(.headline)
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(.blue)
-                                Spacer()
+        VStack {
+            if !detailedView && tickerPosition == "Top" && isNewsTickerActive {
+                NewsTickerView(
+                    tickerTextColor: $tickerTextColor,
+                    tickerFSize: $tickerFSize
+                )
+                .frame(height: 50)
+            }
+            
+            NavigationView {
+                if hasAnyArticles {
+                    if filteredArticles.isEmpty {
+                        VStack {
+                            Text("No articles with selected category:")
+                                .font(.headline)
+                                .padding()
+                            Text("\(selectedCategory).")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.blue)
+                            Spacer()
+                        }
+                        .toolbar {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                CategoryMenu(selectedCategory: $selectedCategory)
                             }
-                            .toolbar {
-                                ToolbarItem(placement: .topBarTrailing) {
-                                    CategoryMenu(selectedCategory: $selectedCategory)
-                                }
-                            }
-                        } else {
-                            ArticleListView(
-                                articles: filteredArticles,
-                                archiveAction: archiveArticle,
-                                addNoteAction: openNoteSheet,
-                                selectedCategory: $selectedCategory,
-                                onDetailViewAppear: { detailedView = true },
-                                onDetailViewDisappear: { detailedView = false }
-                            )
                         }
                     } else {
-                        NoArticlesView()
-                    }
-                }
-                .sheet(isPresented: Binding(
-                    get: { showNoteSheet && selectedArticle != nil },
-                    set: { if !$0 { showNoteSheet = false; selectedArticle = nil } }
-                )) {
-                    if let selectedArticle = selectedArticle {
-                        ArticleNote(
-                            article: selectedArticle,
-                            noteText: $noteText,
-                            onSave: saveNote
+                        ArticleListView(
+                            articles: filteredArticles,
+                            archiveAction: archiveArticle,
+                            addNoteAction: openNoteSheet,
+                            selectedCategory: $selectedCategory,
+                            onDetailViewAppear: { detailedView = true },
+                            onDetailViewDisappear: { detailedView = false }
                         )
                     }
-                }
-                
-                
-                if !detailedView && tickerPosition == "Bottom" && isNewsTickerActive {
-                    NewsTickerView(
-                        tickerTextColor: $tickerTextColor,
-                        tickerFSize: $tickerFSize
-                    )
-                    .frame(height: 50)
+                } else {
+                    NoArticlesView()
                 }
             }
+            .sheet(isPresented: Binding(
+                get: { showNoteSheet && selectedArticle != nil },
+                set: { if !$0 { showNoteSheet = false; selectedArticle = nil } }
+            )) {
+                if let selectedArticle = selectedArticle {
+                    ArticleNote(
+                        article: selectedArticle,
+                        noteText: $noteText,
+                        onSave: saveNote
+                    )
+                }
+            }
+            if !detailedView && tickerPosition == "Bottom" && isNewsTickerActive {
+                NewsTickerView(
+                    tickerTextColor: $tickerTextColor,
+                    tickerFSize: $tickerFSize
+                )
+                .frame(height: 50)
+            }
         }
-
+    }
+    
     
     func archiveArticle(at offsets: IndexSet) {
         for index in offsets {
@@ -130,4 +127,11 @@ struct ArticlesView: View {
             print("Error saving changes: \(error)")
         }
     }
+}
+
+#Preview {
+    ArticlesView(
+        tickerTextColor: .constant(.tickerText),
+        tickerFSize: .constant(16.0))
+    .modelContainer(sharedModelContainer)
 }

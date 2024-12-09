@@ -32,20 +32,22 @@ struct ArticleDetailView: View {
                     AsyncImage(url: url) { phase in
                         switch phase {
                         case .empty:
+                            
                             ProgressView()
+                            
                         case .success(let image):
                             image
                                 .resizable()
                                 .scaledToFit()
                                 .frame(maxWidth: .infinity)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .shadow(color: Color.gray.opacity(0.1), radius: 10)
                         case .failure:
                             Image(systemName: "photo")
                                 .resizable()
                                 .scaledToFit()
                                 .foregroundStyle(.gray)
                         @unknown default:
+                            
                             EmptyView()
                         }
                     }
@@ -112,12 +114,12 @@ struct ArticleDetailView: View {
                                 updateCategory(for: savedArticles, to: newValue)
                             }
                         }
-                    } label: {
+                    }
+                    label: {
                         Image(systemName: isCategoryChosen ? "tag.fill" : "tag")
                             .foregroundStyle(isCategoryChosen ? .blue : .primary)
                     }
                 }
-                
             }
             .onAppear {
                 checkIfArticleIsSaved()
@@ -131,7 +133,7 @@ struct ArticleDetailView: View {
             }
         }
     }
-
+    
     
     func checkIfArticleIsSaved() {
         let savedArticles = Article.fetchAll(in: modelContext)
@@ -141,7 +143,7 @@ struct ArticleDetailView: View {
     func checkIfCategoryIsChosen() {
         isCategoryChosen = selectedCategory != nil
     }
-
+    
     func toggleSaveArticle() {
         if isArticleSaved {
             let savedArticles = Article.fetchAll(in: modelContext)
@@ -195,6 +197,9 @@ struct ArticleDetailView: View {
             print("Error saving changes: \(error.localizedDescription)")
         }
     }
+}
 
 
+#Preview {
+    ArticleDetailView(article: NewsArticle(author: "Casper", title: "Ghost Retreat", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", url: "https://i.pinimg.com/736x/5e/af/8e/5eaf8e008ac13605c48c04eff3d2f194.jpg", urlToImage: "https://i.pinimg.com/736x/5e/af/8e/5eaf8e008ac13605c48c04eff3d2f194.jpg", publishedAt: "11.29.2024"))
 }
